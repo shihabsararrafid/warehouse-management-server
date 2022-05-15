@@ -38,7 +38,9 @@ run().catch(console.dir);
 
 // The main api
 app.get("/", (req, res) => {
-  res.send("The Server is running successfully but it is late for me");
+  res.send(
+    "The Server is running successfully and sometime heroku fail to serve my content"
+  );
 });
 
 app.listen(port, () => {
