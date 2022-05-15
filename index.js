@@ -16,12 +16,19 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-client.connect((err) => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  console.log("MOngo db connected");
-  client.close();
-});
+async function run() {
+  await client.connect();
+  const itemsCollection = client.db("ElectraWarehouse").collection("Items");
+  app.get("/item", async (req, res) => {
+    const query = {};
+    const cursor = itemsCollection.find(query);
+
+    const result = await cursor.toArray();
+
+    res.send(result);
+  });
+}
+run().catch(console.dir);
 
 // The main api
 app.get("/", (req, res) => {
