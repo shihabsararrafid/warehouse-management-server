@@ -47,6 +47,13 @@ async function run() {
     const result = await itemsCollection.updateOne(filter, updateddoc, options);
     console.log(result);
   });
+  app.delete("/inventory/:id", async (req, res) => {
+    const itemId = req.params.id;
+    const query = { _id: ObjectId(itemId) };
+    const result = await itemsCollection.deleteOne(query);
+    console.log(result);
+    console.log(itemId);
+  });
 }
 run().catch(console.dir);
 
