@@ -19,6 +19,7 @@ const client = new MongoClient(uri, {
 async function run() {
   await client.connect();
   const itemsCollection = client.db("ElectraWarehouse").collection("Items");
+  // api for getting all the item
   app.get("/inventory", async (req, res) => {
     const query = {};
     const cursor = itemsCollection.find(query);
@@ -27,12 +28,22 @@ async function run() {
 
     res.send(result);
   });
+  // api to add any new item
+  app.post("/inventory", async (req, res) => {
+    const newInventory = req.body;
+
+    const result = await itemsCollection.insertOne(newInventory);
+
+    console.log(result);
+  });
+  // api for getting all the item according to their id
   app.get("/inventory/:id", async (req, res) => {
     const itemId = req.params.id;
     const query = { _id: ObjectId(itemId) };
     const result = await itemsCollection.findOne(query);
     res.send(result);
   });
+  // api to update the quantity of the inventory
   app.put("/inventory/:id", async (req, res) => {
     const newQuantity = req.body.quantity;
     console.log(newQuantity);
@@ -47,6 +58,7 @@ async function run() {
     const result = await itemsCollection.updateOne(filter, updateddoc, options);
     console.log(result);
   });
+  // api to delete the item
   app.delete("/inventory/:id", async (req, res) => {
     const itemId = req.params.id;
     const query = { _id: ObjectId(itemId) };
