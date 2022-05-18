@@ -55,8 +55,49 @@ async function run() {
         quantity: newQuantity,
       },
     };
+
     const result = await itemsCollection.updateOne(filter, updateddoc, options);
     console.log(result);
+  });
+  // api to add a item to myitem section
+  app.put("/addToMyItem/:id", async (req, res) => {
+    const itemId = req.params.id;
+    const userEmail = req.query.email;
+    const filter = { _id: ObjectId(itemId) };
+    const options = { upsert: true };
+    let distinctValues = [];
+    distinctValues = await itemsCollection.distinct("email", filter);
+    console.log(userEmail);
+    console.log(distinctValues);
+    let newEmail = [...distinctValues];
+    if (distinctValues.indexOf(userEmail) === -1) {
+      newEmail = [...distinctValues, userEmail];
+    }
+    //  } else {
+    //   newEmail = [...distinctValues];
+    //  }
+
+    const updateddoc = {
+      $set: {
+        email: newEmail,
+      },
+    };
+
+    const result = await itemsCollection.updateOne(filter, updateddoc, options);
+    console.log(newEmail);
+    res.send(newEmail);
+    //console.log(itemId, userEmail);
+  });
+  // api to get my item from mongobd
+  app.get("/myItem/:userEmail", async (req, res) => {
+    const userEmailNew = req.params.userEmail;
+    const query = { email: userEmailNew };
+    console.log(userEmailNew, query);
+
+    const cursor = itemsCollection.find(query);
+    const result = await cursor.toArray();
+
+    res.send(result);
   });
   // api to delete the item
   app.delete("/inventory/:id", async (req, res) => {
