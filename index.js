@@ -57,7 +57,7 @@ async function run() {
     };
 
     const result = await itemsCollection.updateOne(filter, updateddoc, options);
-    console.log(result);
+    res.send(result);
   });
   // api to add a item to myitem section
   app.put("/addToMyItem/:id", async (req, res) => {
